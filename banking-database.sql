@@ -34,10 +34,10 @@ CREATE TABLE Customer(
 -- show one-to-many relationship (one customer -> multiple accounts)
  CREATE TABLE Account(
         account_no bigint primary key,
-        customer_id int not null;
-        account_type varchar,
+        customer_id int not null,
+        account_type varchar(15) check(account_type in ('saving' , 'current')),
         balance decimal(18,2)  check (balance >=0),
-        createdAt DATETIME default GETDATE()
+        createdAt DATETIME2 DEFAULT SYSDATETIME(),
 
         foreign key (customer_id) 
         references Customer(customer_Id) 
@@ -51,7 +51,7 @@ CREATE TABLE Customer(
 -- transaction concept , check constraint and indexing on txn_date.
 CREATE TABLE Transactions(
        txn_id varchar(50) primary key,
-       acconut_number bigint not null,
+       account_number bigint not null,
        txn_type varchar(15) not null check(txn_type in ('credit','debit')), --credit/debit
        amount decimal(18,2) check(amount > 0),
        txn_date DATETIME2 DEFAULT SYSDATETIME(),
@@ -76,7 +76,7 @@ CREATE TABLE FundTransfer(
        foreign key(from_account) 
        references Account(account_no)
        on delete cascade
-       on update cascade
+       on update cascade,
 
        foreign key(to_account)
        references Account(account_no)
